@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 
+using namespace std;
+
 // Forward declarations
 class Course;
 class Student;
@@ -12,19 +14,17 @@ class Assignment;
 
 class Instructor : public User {
 private:
-    std::vector<Course*> teachingCourses;
+    vector<Course*> teachingCourses;
 
 public:
-    Instructor(int id, const std::string& name, const std::string& password);
+    Instructor(int id, const string& name, const string& password);
 
-    // Override pure virtual functions
     void login() override;
     void displayMenu() override;
-    std::string getUserType() const override;
+    string getUserType() const override;
 
-    // Instructor-specific methods
-    void createAssignment(Course* course, const std::string& details, const std::string& deadline);
-    void gradeStudent(Student* student, Course* course, const std::string& grade);
+    void createAssignment(Course* course, const string& details, const string& deadline);
+    void gradeStudent(Student* student, Course* course, const string& grade);
     void viewClassList(Course* course);
     void addTeachingCourse(Course* course);
 };

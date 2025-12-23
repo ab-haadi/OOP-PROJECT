@@ -8,19 +8,19 @@
 #include <vector>
 #include <memory>
 #include <limits>
+using namespace std;
 
-// Function prototypes
-void studentLogin();
-void instructorLogin();
-void administratorLogin();
-void createSampleData(std::vector<Course*>& courses,
-    std::vector<Student*>& students,
+void studentLogin(vector<Student*>& students, vector<Course*>& courses);
+void instructorLogin(Instructor* instructor, vector<Course*>& courses, vector<Student*>& students);
+void administratorLogin(Administrator* admin, vector<Course*>& courses, vector<Student*>& students);
+void createSampleData(vector<Course*>& courses,
+    vector<Student*>& students,
     Administrator*& admin,
     Instructor*& instructor);
 
 int main() {
-    std::vector<Course*> courses;
-    std::vector<Student*> students;
+    vector<Course*> courses;
+    vector<Student*> students;
     Administrator* admin = nullptr;
     Instructor* instructor = nullptr;
 
@@ -30,35 +30,35 @@ int main() {
     int choice;
 
     while (true) {
-        std::cout << "\n========================================\n";
-        std::cout << "   LEARNING MANAGEMENT SYSTEM (LMS)    \n";
-        std::cout << "========================================\n";
-        std::cout << "1. Login as Student\n";
-        std::cout << "2. Login as Instructor\n";
-        std::cout << "3. Login as Administrator\n";
-        std::cout << "4. Exit\n";
-        std::cout << "========================================\n";
-        std::cout << "Enter your choice: ";
+        cout << "\n========================================\n";
+        cout << "   LEARNING MANAGEMENT SYSTEM (LMS)    \n";
+        cout << "========================================\n";
+        cout << "1. Login as Student\n";
+        cout << "2. Login as Instructor\n";
+        cout << "3. Login as Administrator\n";
+        cout << "4. Exit\n";
+        cout << "========================================\n";
+        cout << "Enter your choice: ";
 
-        if (!(std::cin >> choice)) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input! Please enter a number.\n";
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input! Please enter a number.\n";
             continue;
         }
 
         switch (choice) {
         case 1:
-            studentLogin();
+            studentLogin(students, courses);
             break;
         case 2:
-            instructorLogin();
+            instructorLogin(instructor, courses, students);
             break;
         case 3:
-            administratorLogin();
+            administratorLogin(admin, courses, students);
             break;
         case 4:
-            std::cout << "Thank you for using LMS. Goodbye!\n";
+            cout << "Thank you for using LMS. Goodbye!\n";
 
             // Cleanup
             if (admin) delete admin;
@@ -74,241 +74,369 @@ int main() {
 
             return 0;
         default:
-            std::cout << "Invalid choice! Please try again.\n";
+            cout << "Invalid choice! Please try again.\n";
         }
 
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
     return 0;
 }
 
-void studentLogin() {
+void studentLogin(vector<Student*>& students, vector<Course*>& courses) {
     int id;
-    std::string password;
+    string password;
 
-    std::cout << "\n=== STUDENT LOGIN ===\n";
-    std::cout << "Enter Student ID: ";
-    std::cin >> id;
-    std::cout << "Enter Password: ";
-    std::cin >> password;
+    cout << "\n=== STUDENT LOGIN ===\n";
+    cout << "Enter Student ID: ";
+    cin >> id;
+    cout << "Enter Password: ";
+    cin >> password;
 
-    // Hardcoded student credentials for demo
-    if ((id == 3001 && password == "student123") ||
-        (id == 3002 && password == "student456")) {
+    Student* loggedStudent = nullptr;
 
-        Student* student;
-        if (id == 3001) {
-            student = new Student(3001, "Ali Khan", "student123");
+    // Find student in the list
+    for (auto student : students) {
+        // For demo, just check ID (in real app, check password properly)
+        if (student->getUserID() == id) {
+            loggedStudent = student;
+            break;
         }
-        else {
-            student = new Student(3002, "Sara Ahmed", "student456");
-        }
+    }
 
-        student->login();
+    if (loggedStudent) {
+        loggedStudent->login();
 
         int choice;
         do {
-            student->displayMenu();
+            loggedStudent->displayMenu();
 
-            if (!(std::cin >> choice)) {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Invalid input! Please enter a number.\n";
+            if (!(cin >> choice)) {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid input! Please enter a number.\n";
                 continue;
             }
 
-            // Note: In a complete implementation, these menu options would
-            // connect to actual functionality. For now, they're placeholders.
             switch (choice) {
             case 1:
-                std::cout << "Viewing enrolled courses...\n";
-                // student->viewEnrolledCourses();
+                loggedStudent->viewEnrolledCourses();
                 break;
             case 2:
-                std::cout << "Viewing grades...\n";
-                // student->viewGrades();
+                loggedStudent->viewGrades();
                 break;
-            case 3:
-                std::cout << "Submitting assignment...\n";
-                // student->submitAssignment();
+            case 3: {
+                if (courses.empty()) {
+                    cout << "No courses available.\n";
+                    break;
+                }
+                cout << "Select course to submit assignment:\n";
+                for (size_t i = 0; i < courses.size(); ++i) {
+                    cout << i + 1 << ". " << courses[i]->getCourseName() << endl;
+                }
+                int courseChoice;
+                cin >> courseChoice;
+                if (courseChoice > 0 && courseChoice <= courses.size()) {
+                    // For demo, create a simple assignment
+                    string desc;
+                    cin.ignore();
+                    cout << "Enter assignment description: ";
+                    getline(cin, desc);
+                    Assignment* assignment = new Assignment(
+                        desc,
+                        "2024-12-31",
+                        courses[courseChoice - 1]
+                    );
+                    loggedStudent->submitAssignment(assignment);
+                    delete assignment;
+                }
                 break;
+            }
             case 4:
-                std::cout << "Calculating GPA...\n";
-                // student->calculateGPA();
+                loggedStudent->calculateGPA();
                 break;
             case 5:
-                std::cout << "Paying fees...\n";
-                // student->payFees();
+                loggedStudent->payFees();
                 break;
             case 6:
-                std::cout << "Logging out...\n";
+                cout << "Logging out...\n";
                 break;
             default:
-                std::cout << "Invalid choice! Please try again.\n";
+                cout << "Invalid choice! Please try again.\n";
             }
 
             if (choice != 6) {
-                std::cout << "\nPress Enter to continue...";
-                std::cin.ignore();
-                std::cin.get();
+                cout << "\nPress Enter to continue...";
+                cin.ignore();
+                cin.get();
             }
 
         } while (choice != 6);
-
-        delete student;
     }
     else {
-        std::cout << "Invalid credentials! Access denied.\n";
+        cout << "Invalid credentials! Access denied.\n";
     }
 }
 
-void instructorLogin() {
+void instructorLogin(Instructor* instructor, vector<Course*>& courses, vector<Student*>& students) {
     int id;
-    std::string password;
+    string password;
 
-    std::cout << "\n=== INSTRUCTOR LOGIN ===\n";
-    std::cout << "Enter Instructor ID: ";
-    std::cin >> id;
-    std::cout << "Enter Password: ";
-    std::cin >> password;
+    cout << "\n=== INSTRUCTOR LOGIN ===\n";
+    cout << "Enter Instructor ID: ";
+    cin >> id;
+    cout << "Enter Password: ";
+    cin >> password;
 
-    // Hardcoded instructor credentials for demo
-    if (id == 2001 && password == "prof123") {
-        Instructor* instructor = new Instructor(2001, "Dr. Ahmed", "prof123");
+    if (instructor->getUserID() == id) {
         instructor->login();
 
         int choice;
         do {
             instructor->displayMenu();
 
-            if (!(std::cin >> choice)) {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Invalid input! Please enter a number.\n";
+            if (!(cin >> choice)) {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid input! Please enter a number.\n";
                 continue;
             }
 
             switch (choice) {
-            case 1:
-                std::cout << "Creating assignment...\n";
-                // instructor->createAssignment();
+            case 1: {
+                if (courses.empty()) {
+                    cout << "No courses available.\n";
+                    break;
+                }
+                cout << "Select course to create assignment:\n";
+                for (size_t i = 0; i < courses.size(); ++i) {
+                    cout << i + 1 << ". " << courses[i]->getCourseName() << endl;
+                }
+                int courseChoice;
+                cin >> courseChoice;
+                if (courseChoice > 0 && courseChoice <= courses.size()) {
+                    string desc, deadline;
+                    cin.ignore();
+                    cout << "Enter assignment description: ";
+                    getline(cin, desc);
+                    cout << "Enter deadline (YYYY-MM-DD): ";
+                    getline(cin, deadline);
+                    instructor->createAssignment(courses[courseChoice - 1], desc, deadline);
+                }
                 break;
-            case 2:
-                std::cout << "Grading student...\n";
-                // instructor->gradeStudent();
+            }
+            case 2: {
+                if (students.empty() || courses.empty()) {
+                    cout << "No students or courses available.\n";
+                    break;
+                }
+
+                cout << "Select student to grade:\n";
+                for (size_t i = 0; i < students.size(); ++i) {
+                    cout << i + 1 << ". " << students[i]->getName()
+                        << " (ID: " << students[i]->getUserID() << ")\n";
+                }
+                int studentChoice;
+                cin >> studentChoice;
+
+                cout << "Select course for grading:\n";
+                for (size_t i = 0; i < courses.size(); ++i) {
+                    cout << i + 1 << ". " << courses[i]->getCourseName() << endl;
+                }
+                int courseChoice;
+                cin >> courseChoice;
+
+                if (studentChoice > 0 && studentChoice <= students.size() &&
+                    courseChoice > 0 && courseChoice <= courses.size()) {
+
+                    string grade;
+                    cin.ignore();
+                    cout << "Enter grade (A, B+, B, C+, C, D, F): ";
+                    getline(cin, grade);
+
+                    instructor->gradeStudent(students[studentChoice - 1],
+                        courses[courseChoice - 1],
+                        grade);
+                }
                 break;
-            case 3:
-                std::cout << "Viewing class list...\n";
-                // instructor->viewClassList();
+            }
+            case 3: {
+                if (courses.empty()) {
+                    cout << "No courses available.\n";
+                    break;
+                }
+                cout << "Select course to view class list:\n";
+                for (size_t i = 0; i < courses.size(); ++i) {
+                    cout << i + 1 << ". " << courses[i]->getCourseName() << endl;
+                }
+                int courseChoice;
+                cin >> courseChoice;
+                if (courseChoice > 0 && courseChoice <= courses.size()) {
+                    instructor->viewClassList(courses[courseChoice - 1]);
+                }
                 break;
+            }
             case 4:
-                std::cout << "Viewing teaching courses...\n";
-                // instructor->viewTeachingCourses();
+                cout << "You are teaching " << courses.size() << " courses.\n";
+                for (size_t i = 0; i < courses.size(); ++i) {
+                    cout << i + 1 << ". " << courses[i]->getCourseName()
+                        << " (" << courses[i]->getCourseID() << ")\n";
+                }
                 break;
             case 5:
-                std::cout << "Logging out...\n";
+                cout << "Logging out...\n";
                 break;
             default:
-                std::cout << "Invalid choice! Please try again.\n";
+                cout << "Invalid choice! Please try again.\n";
             }
 
             if (choice != 5) {
-                std::cout << "\nPress Enter to continue...";
-                std::cin.ignore();
-                std::cin.get();
+                cout << "\nPress Enter to continue...";
+                cin.ignore();
+                cin.get();
             }
 
         } while (choice != 5);
-
-        delete instructor;
     }
     else {
-        std::cout << "Invalid credentials! Access denied.\n";
+        cout << "Invalid credentials! Access denied.\n";
     }
 }
 
-void administratorLogin() {
+void administratorLogin(Administrator* admin, vector<Course*>& courses, vector<Student*>& students) {
     int id;
-    std::string password;
+    string password;
 
-    std::cout << "\n=== ADMINISTRATOR LOGIN ===\n";
-    std::cout << "Enter Administrator ID: ";
-    std::cin >> id;
-    std::cout << "Enter Password: ";
-    std::cin >> password;
+    cout << "\n=== ADMINISTRATOR LOGIN ===\n";
+    cout << "Enter Administrator ID: ";
+    cin >> id;
+    cout << "Enter Password: ";
+    cin >> password;
 
-    // Hardcoded admin credentials for demo
-    if (id == 1001 && password == "admin123") {
-        Administrator* admin = new Administrator(1001, "Admin", "admin123");
+    if (admin->getUserID() == id) {
         admin->login();
+
+        // Add existing data to admin's lists
+        for (auto student : students) {
+            admin->addStudent(student);
+        }
 
         int choice;
         do {
             admin->displayMenu();
 
-            if (!(std::cin >> choice)) {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Invalid input! Please enter a number.\n";
+            if (!(cin >> choice)) {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid input! Please enter a number.\n";
                 continue;
             }
 
             switch (choice) {
-            case 1:
-                std::cout << "Adding new course...\n";
-                // admin->addCourse();
+            case 1: {
+                string courseID, courseName;
+                cin.ignore();
+                cout << "Enter Course ID: ";
+                getline(cin, courseID);
+                cout << "Enter Course Name: ";
+                getline(cin, courseName);
+                admin->addCourse(courseID, courseName);
                 break;
+            }
             case 2:
-                std::cout << "Listing all students...\n";
-                // admin->listAllStudents();
+                admin->listAllStudents();
                 break;
             case 3:
-                std::cout << "Viewing paid students...\n";
-                // admin->viewFeeStatus('P');
+                admin->viewFeeStatus('P');
                 break;
             case 4:
-                std::cout << "Viewing unpaid students...\n";
-                // admin->viewFeeStatus('U');
+                admin->viewFeeStatus('U');
                 break;
             case 5:
-                std::cout << "Listing all courses...\n";
-                // admin->listAllCourses();
+                admin->listAllCourses();
                 break;
             case 6:
-                std::cout << "Logging out...\n";
+                cout << "Logging out...\n";
                 break;
             default:
-                std::cout << "Invalid choice! Please try again.\n";
+                cout << "Invalid choice! Please try again.\n";
             }
 
             if (choice != 6) {
-                std::cout << "\nPress Enter to continue...";
-                std::cin.ignore();
-                std::cin.get();
+                cout << "\nPress Enter to continue...";
+                cin.ignore();
+                cin.get();
             }
 
         } while (choice != 6);
-
-        delete admin;
     }
     else {
-        std::cout << "Invalid credentials! Access denied.\n";
+        cout << "Invalid credentials! Access denied.\n";
     }
 }
 
-void createSampleData(std::vector<Course*>& courses,
-    std::vector<Student*>& students,
+void createSampleData(vector<Course*>& courses,
+    vector<Student*>& students,
     Administrator*& admin,
     Instructor*& instructor) {
-    // Create sample data for testing
-    courses.push_back(new Course("CS101", "Object Oriented Programming"));
-    courses.push_back(new Course("CS102", "Digital Logic Design"));
-    courses.push_back(new Course("MATH101", "Applied Calculus"));
 
-    students.push_back(new Student(3001, "Ali Khan", "student123"));
-    students.push_back(new Student(3002, "Sara Ahmed", "student456"));
+    // Create sample courses
+    Course* course1 = new Course("CS101", "Object Oriented Programming");
+    Course* course2 = new Course("CS102", "Digital Logic Design");
+    Course* course3 = new Course("MATH101", "Applied Calculus");
 
+    courses.push_back(course1);
+    courses.push_back(course2);
+    courses.push_back(course3);
+
+    // Create sample students
+    Student* student1 = new Student(3001, "Ali Khan", "student123");
+    Student* student2 = new Student(3002, "Sara Ahmed", "student456");
+
+    students.push_back(student1);
+    students.push_back(student2);
+
+    // Create admin and instructor
     admin = new Administrator(1001, "Admin", "admin123");
     instructor = new Instructor(2001, "Dr. Ahmed", "prof123");
+
+    // Set up relationships
+    course1->setInstructor(instructor);
+    course2->setInstructor(instructor);
+    instructor->addTeachingCourse(course1);
+    instructor->addTeachingCourse(course2);
+
+    // Enroll students in courses
+    student1->enrollCourse(course1);
+    student1->enrollCourse(course2);
+    student2->enrollCourse(course1);
+    student2->enrollCourse(course3);
+
+    course1->addStudent(student1);
+    course1->addStudent(student2);
+    course2->addStudent(student1);
+    course3->addStudent(student2);
+
+    // Add some initial grades
+    student1->setGrade(course1, "A");
+    student1->setGrade(course2, "B+");
+    student2->setGrade(course1, "B");
+    student2->setGrade(course3, "A");
+
+    // Create sample assignments
+    Assignment* assignment1 = new Assignment("OOP Project", "2024-12-15", course1);
+    Assignment* assignment2 = new Assignment("DLD Lab Report", "2024-12-10", course2);
+    Assignment* assignment3 = new Assignment("Calculus Homework", "2024-12-05", course3);
+
+    course1->addAssignment(assignment1);
+    course2->addAssignment(assignment2);
+    course3->addAssignment(assignment3);
+
+    // Set fee status
+    student1->payFees();  // Ali pays fees
+    // Sara remains unpaid
+
+    // Calculate initial GPAs
+    student1->calculateGPA();
+    student2->calculateGPA();
 }

@@ -4,7 +4,9 @@
 #include "Assignment.h"
 #include <iostream>
 
-Course::Course(const std::string& id, const std::string& name)
+using namespace std;
+
+Course::Course(const string& id, const string& name)
     : courseID(id), courseName(name), instructor(nullptr) {
 }
 
@@ -16,11 +18,11 @@ Course::~Course() {
     enrolledStudents.clear();
 }
 
-std::string Course::getCourseID() const {
+string Course::getCourseID() const {
     return courseID;
 }
 
-std::string Course::getCourseName() const {
+string Course::getCourseName() const {
     return courseName;
 }
 
@@ -28,7 +30,7 @@ Instructor* Course::getInstructor() const {
     return instructor;
 }
 
-std::vector<Student*> Course::getEnrolledStudents() const {
+vector<Student*> Course::getEnrolledStudents() const {
     return enrolledStudents;
 }
 
@@ -52,16 +54,17 @@ void Course::removeStudent(Student* student) {
 }
 
 void Course::listEnrolledStudents() const {
-    std::cout << "\n=== ENROLLED STUDENTS IN " << courseName << " ===\n";
+    cout << "\n=== ENROLLED STUDENTS IN " << courseName << " ===\n";
     if (enrolledStudents.empty()) {
-        std::cout << "No students enrolled.\n";
+        cout << "No students enrolled.\n";
         return;
     }
 
     for (size_t i = 0; i < enrolledStudents.size(); ++i) {
-        std::cout << i + 1 << ". " << enrolledStudents[i]->getName()
+        cout << i + 1 << ". " << enrolledStudents[i]->getName()
             << " (ID: " << enrolledStudents[i]->getUserID() << ")\n";
     }
+    cout << "Total: " << enrolledStudents.size() << " student(s)\n";
 }
 
 void Course::addAssignment(Assignment* assignment) {
@@ -69,16 +72,17 @@ void Course::addAssignment(Assignment* assignment) {
 }
 
 void Course::listAssignments() const {
-    std::cout << "\n=== ASSIGNMENTS FOR " << courseName << " ===\n";
+    cout << "\n=== ASSIGNMENTS FOR " << courseName << " ===\n";
     if (assignments.empty()) {
-        std::cout << "No assignments.\n";
+        cout << "No assignments.\n";
         return;
     }
 
     for (size_t i = 0; i < assignments.size(); ++i) {
-        std::cout << i + 1 << ". " << assignments[i]->getDescription()
+        cout << i + 1 << ". " << assignments[i]->getDescription()
             << " (Due: " << assignments[i]->getDeadline() << ")\n";
     }
+    cout << "Total: " << assignments.size() << " assignment(s)\n";
 }
 
 bool Course::isStudentEnrolled(Student* student) const {

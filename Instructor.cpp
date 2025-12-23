@@ -5,57 +5,61 @@
 #include <iostream>
 #include <limits>
 
-Instructor::Instructor(int id, const std::string& name, const std::string& password)
+using namespace std;
+
+Instructor::Instructor(int id, const string& name, const string& password)
     : User(id, name, password) {
 }
 
 void Instructor::login() {
-    std::cout << "\n=== INSTRUCTOR LOGIN ===\n";
-    std::cout << "Welcome, Prof. " << getName() << " (ID: " << getUserID() << ")\n";
-    std::cout << "Courses Teaching: " << teachingCourses.size() << "\n";
+    cout << "\n=== INSTRUCTOR LOGIN ===\n";
+    cout << "Welcome, Prof. " << getName() << " (ID: " << getUserID() << ")\n";
+    cout << "Courses Teaching: " << teachingCourses.size() << "\n";
 }
 
 void Instructor::displayMenu() {
-    std::cout << "\n=== INSTRUCTOR DASHBOARD ===\n";
-    std::cout << "1. Create Assignment\n";
-    std::cout << "2. Grade Student\n";
-    std::cout << "3. View Class List\n";
-    std::cout << "4. View Teaching Courses\n";
-    std::cout << "5. Logout\n";
-    std::cout << "=============================\n";
-    std::cout << "Enter your choice: ";
+    cout << "\n=== INSTRUCTOR DASHBOARD ===\n";
+    cout << "1. Create Assignment\n";
+    cout << "2. Grade Student\n";
+    cout << "3. View Class List\n";
+    cout << "4. View Teaching Courses\n";
+    cout << "5. Logout\n";
+    cout << "=============================\n";
+    cout << "Enter your choice: ";
 }
 
-std::string Instructor::getUserType() const {
+string Instructor::getUserType() const {
     return "Instructor";
 }
 
-void Instructor::createAssignment(Course* course, const std::string& details, const std::string& deadline) {
+void Instructor::createAssignment(Course* course, const string& details, const string& deadline) {
     Assignment* assignment = new Assignment(details, deadline, course);
     course->addAssignment(assignment);
-    std::cout << "Assignment created for " << course->getCourseName() << "\n";
+    cout << "Assignment created for " << course->getCourseName() << "!\n";
+    cout << "Details: " << details << "\n";
+    cout << "Deadline: " << deadline << "\n";
 }
 
-void Instructor::gradeStudent(Student* student, Course* course, const std::string& grade) {
+void Instructor::gradeStudent(Student* student, Course* course, const string& grade) {
     student->setGrade(course, grade);
-    std::cout << "Grade " << grade << " assigned to " << student->getName()
+    cout << "Grade " << grade << " assigned to " << student->getName()
         << " for " << course->getCourseName() << "\n";
 }
 
 void Instructor::viewClassList(Course* course) {
-    std::cout << "\n=== CLASS LIST: " << course->getCourseName() << " ===\n";
-    std::vector<Student*> students = course->getEnrolledStudents();
+    cout << "\n=== CLASS LIST: " << course->getCourseName() << " ===\n";
+    vector<Student*> students = course->getEnrolledStudents();
 
     if (students.empty()) {
-        std::cout << "No students enrolled.\n";
+        cout << "No students enrolled.\n";
         return;
     }
 
     for (size_t i = 0; i < students.size(); ++i) {
-        std::cout << i + 1 << ". " << students[i]->getName()
+        cout << i + 1 << ". " << students[i]->getName()
             << " (ID: " << students[i]->getUserID() << ")\n";
-        std::cout << "   Grade: " << students[i]->getGrade(course) << "\n";
-        std::cout << "   Fee Status: "
+        cout << "   Grade: " << students[i]->getGrade(course) << "\n";
+        cout << "   Fee Status: "
             << (students[i]->getFeeStatus() == 'P' ? "PAID" : "UNPAID") << "\n";
     }
 }
