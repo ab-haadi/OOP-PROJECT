@@ -2,15 +2,17 @@
 #include "Course.h"
 #include <iostream>
 
-Assignment::Assignment(const std::string& desc, const std::string& dl, Course* crs)
+using namespace std;
+
+Assignment::Assignment(const string& desc, const string& dl, Course* crs)
     : description(desc), deadline(dl), course(crs) {
 }
 
-std::string Assignment::getDescription() const {
+string Assignment::getDescription() const {
     return description;
 }
 
-std::string Assignment::getDeadline() const {
+string Assignment::getDeadline() const {
     return deadline;
 }
 
@@ -19,7 +21,7 @@ Course* Assignment::getCourse() const {
 }
 
 void Assignment::submit() const {
-    std::cout << "Assignment submitted: " << description << "\n";
-    std::cout << "Course: " << course->getCourseName() << "\n";
-    std::cout << "Deadline: " << deadline << "\n";
+    cout << "Assignment submitted: " << description << "\n";
+    cout << "Course: " << course->getCourseName() << "\n";
+    cout << "Deadline: " << deadline << "\n";
 }

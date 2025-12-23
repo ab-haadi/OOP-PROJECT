@@ -4,26 +4,24 @@
 #include "User.h"
 #include <vector>
 #include <string>
+using namespace std;
 
-// Forward declarations
 class Course;
 class Student;
 
 class Administrator : public User {
 private:
-    std::vector<Course*> allCourses;
-    std::vector<Student*> allStudents;
+    vector<Course*> allCourses;
+    vector<Student*> allStudents;
 
 public:
-    Administrator(int id, const std::string& name, const std::string& password);
+    Administrator(int id, const string& name, const string& password);
 
-    // Override pure virtual functions
     void login() override;
     void displayMenu() override;
-    std::string getUserType() const override;
+    string getUserType() const override;
 
-    // Administrator-specific methods
-    void addCourse(const std::string& courseID, const std::string& courseName);
+    void addCourse(const string& courseID, const string& courseName);
     void listAllStudents();
     void viewFeeStatus(char status);
     void addStudent(Student* student);

@@ -3,24 +3,24 @@
 
 #include <string>
 
+using namespace std;
+
 // Forward declaration
 class Course;
 
 class Assignment {
 private:
-    std::string description;
-    std::string deadline;
+    string description;
+    string deadline;
     Course* course;
 
 public:
-    Assignment(const std::string& desc, const std::string& dl, Course* crs);
+    Assignment(const string& desc, const string& dl, Course* crs);
 
-    // Getters
-    std::string getDescription() const;
-    std::string getDeadline() const;
+    string getDescription() const;
+    string getDeadline() const;
     Course* getCourse() const;
 
-    // Assignment methods
     void submit() const;
 };
 
